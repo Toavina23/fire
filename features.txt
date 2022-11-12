@@ -1,0 +1,20 @@
+Login:
+Get a list of the courses that I have enroled
+Get the list of courses that I can enrol
+Detail of each course:
+    difficulty
+    duration
+    table of content
+    reponsable(s)
+    price ??
+Enrol for a course
+Detail of each of the enroled course:
+    progression
+    results (if there is exams)
+    table of contentthe list of courses that I can enrol
+Detail of each course:
+    difficulty
+    duration
+    table of content
+    reponsable(s)
+    price ??
