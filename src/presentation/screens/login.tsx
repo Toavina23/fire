@@ -64,21 +64,32 @@ export default function Login({ navigation }: Props) {
 				{status === AppStatus.Failed && (
 					<View
 						style={{
+							display: "flex",
+							justifyContent: "center",
 							marginTop: 10,
 							marginBottom: 10,
 						}}
 					>
-						<Text style={textStyle.textSmError}>{error!.message}</Text>
+						<Text
+							style={[
+								textStyle.textMdError,
+								{
+									textAlign: "center",
+								},
+							]}
+						>
+							{error!.message}
+						</Text>
 					</View>
 				)}
 				<Input
-					rules={{ required: "Le nom d'utilisateur est requis"}}
+					rules={{ required: "Le nom d'utilisateur est requis" }}
 					control={control}
 					name="username"
 					label="Nom d'utilisateur"
 				></Input>
 				<Input
-					rules={{ required: "Le mot de passe est requis"}}
+					rules={{ required: "Le mot de passe est requis" }}
 					control={control}
 					name="password"
 					secure

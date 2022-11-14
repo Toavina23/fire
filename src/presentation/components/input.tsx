@@ -35,7 +35,6 @@ export default function Input({ label, secure, control, name , rules}: InputProp
 					field: { value, onChange, onBlur },
 					fieldState: { error },
 				}) => {
-					console.log(name, error)
 					return (
 						<>
 							<Text style={error ? textStyle.textSmError : textStyle.textSm}>
