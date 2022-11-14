@@ -72,11 +72,13 @@ export default function Login({ navigation }: Props) {
 					</View>
 				)}
 				<Input
+					rules={{ required: "Le nom d'utilisateur est requis"}}
 					control={control}
 					name="username"
 					label="Nom d'utilisateur"
 				></Input>
 				<Input
+					rules={{ required: "Le mot de passe est requis"}}
 					control={control}
 					name="password"
 					secure

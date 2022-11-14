@@ -4,13 +4,14 @@ import { View, TextInput, Text } from "react-native";
 import { inputStyle, textStyle } from "../../constants/styles";
 
 type InputProps = {
+	rules: any;
 	name: string;
 	control: Control<any, any>;
 	label: string;
 	secure?: boolean;
 };
 
-export default function Input({ label, secure, control, name }: InputProps) {
+export default function Input({ label, secure, control, name , rules}: InputProps) {
 	const [focus, setFocus] = useState(false);
 	const onFocus = () => {
 		setFocus(true);
@@ -28,11 +29,13 @@ export default function Input({ label, secure, control, name }: InputProps) {
 	return (
 		<View style={inputStyle.inputGroup}>
 			<Controller
+			rules={rules}
 				name={name}
 				render={({
 					field: { value, onChange, onBlur },
 					fieldState: { error },
 				}) => {
+					console.log(name, error)
 					return (
 						<>
 							<Text style={error ? textStyle.textSmError : textStyle.textSm}>
