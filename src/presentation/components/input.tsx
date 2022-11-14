@@ -1,53 +1,59 @@
 import React, { useState } from "react";
+import { Control, Controller, FieldError } from "react-hook-form";
 import { View, TextInput, Text } from "react-native";
 import { inputStyle, textStyle } from "../../constants/styles";
 
 type InputProps = {
-	changeNotifier: CallableFunction;
-	value: string;
+	name: string;
+	control: Control<any, any>;
 	label: string;
 	secure?: boolean;
-	error: string | null;
 };
 
-export default function Input({
-	changeNotifier,
-	value,
-	label,
-	secure,
-	error
-}: InputProps) {
-	const handleChange = (newValue: string): void => {
-		changeNotifier(newValue);
-	};
+export default function Input({ label, secure, control, name }: InputProps) {
 	const [focus, setFocus] = useState(false);
 	const onFocus = () => {
 		setFocus(true);
 	};
-	const onBlur = () => {
+	const defineInputStyle = (error: FieldError | undefined) => {
+		if (error) {
+			return inputStyle.inputError;
+		}
+		return focus ? inputStyle.inputFocused : inputStyle.input;
+	};
+	const onInputBlur = (onBlur: CallableFunction) => {
+		onBlur();
 		setFocus(false);
 	};
-
-	const defineInputStyle = () => {
-		if(error != null){
-			return inputStyle.inputError
-		}
-		else{
-			return focus ? inputStyle.inputFocused : inputStyle.input
-		}
-	}
 	return (
 		<View style={inputStyle.inputGroup}>
-			<Text style={error === null ? textStyle.textSm: textStyle.textSmError}>{label}</Text>
-			<TextInput
-				onBlur={() => onBlur()}
-				onFocus={() => onFocus()}
-				secureTextEntry={secure ? true : false}
-				onChangeText={handleChange}
-				style={defineInputStyle()}
-				value={value}
-			></TextInput>
-			{error && <Text style={textStyle.textSmError}>{error}</Text>}
+			<Controller
+				name={name}
+				render={({
+					field: { value, onChange, onBlur },
+					fieldState: { error },
+				}) => {
+					return (
+						<>
+							<Text style={error ? textStyle.textSmError : textStyle.textSm}>
+								{label}
+							</Text>
+							<TextInput
+								value={value}
+								onBlur={() => onInputBlur(onBlur)}
+								onFocus={() => onFocus()}
+								onChangeText={onChange}
+								secureTextEntry={secure ? true : false}
+								style={defineInputStyle(error)}
+							></TextInput>
+							{error && (
+								<Text style={textStyle.textSmError}>{error.message}</Text>
+							)}
+						</>
+					);
+				}}
+				control={control}
+			/>
 		</View>
 	);
 }

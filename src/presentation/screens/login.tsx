@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
-import { Image, View, Text, ActivityIndicator } from "react-native";
+import React, { useEffect } from "react";
+import { Image, View, Text } from "react-native";
 import { useSelector } from "react-redux";
 import { inputStyle, textStyle } from "../../constants/styles";
 import { pageStyle } from "../../constants/styles/container-style";
@@ -10,58 +10,37 @@ import { selectAuthenticationState } from "../../domain/slice/authentication/aut
 import { login } from "../../domain/slice/authentication/authenticationThunk";
 import { AppStatus } from "../../utils/appStatus";
 import { ButtonPrimary, Input, Loading } from "../components";
-import { useForm } from "react-hook-form";
-
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 type LoginScreenParams = { home: { id: number } | undefined };
+type FormValues = {
+	username: string;
+	password: string;
+};
 type Props = NativeStackScreenProps<LoginScreenParams>;
 export default function Login({ navigation }: Props) {
 	const { error, status } = useSelector(selectAuthenticationState);
 	const dispatch = useAppDispatch();
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
-	const [usernameError, setUsernameError] = useState<string | null>(null);
-	const [passwordError, setPasswordError] = useState<string | null>(null);
-	const { control, handleSubmit, formState: {errors} } = useForm();
-	const validate = (): boolean => {
-		clearErrors();
-		let isValid = true;
-		if (username === "") {
-			setUsernameError("Le nom d'utilisateur est requis");
-			isValid = false;
-		}
-		if (password === "") {
-			setPasswordError("Le mot de passe est requis");
-			isValid = false;
-		}
-		return isValid;
-	};
+	const {
+		control,
+		handleSubmit,
+		formState: { errors, isValid },
+	} = useForm<FormValues>({
+		defaultValues: {
+			username: "",
+			password: "",
+		},
+	});
 	useEffect(() => {
 		if (status === AppStatus.Succeded) {
 			navigation.navigate("home");
-			reset();
 		}
 	}, [status]);
-	const clearErrors = () => {
-		setUsernameError(null);
-		setPasswordError(null);
-	};
-
-	const reset = (): void => {
-		setUsername("");
-		setPassword("");
-	};
-
-	const handleUsernameChange = (newUsername: string) => {
-		setUsername((_) => newUsername);
-	};
-	const handlePasswordChange = (newPassword: string) => {
-		setPassword((_) => newPassword);
-	};
-
-	const handleButtonPress = () => {
-		if (validate()) {
-			dispatch(login({ username: username, password: password }));
+	const handleButtonPress: SubmitHandler<FormValues> = (data: FormValues) => {
+		console.log("doing this");
+		console.log(data.username, data.password);
+		if (isValid) {
+			dispatch(login({ username: data.username, password: data.password }));
 		}
 	};
 
@@ -93,17 +72,15 @@ export default function Login({ navigation }: Props) {
 					</View>
 				)}
 				<Input
-					error={usernameError}
-					value={username}
+					control={control}
+					name="username"
 					label="Nom d'utilisateur"
-					changeNotifier={handleUsernameChange}
 				></Input>
 				<Input
-					error={passwordError}
+					control={control}
+					name="password"
 					secure
-					value={password}
 					label="Mot de passe"
-					changeNotifier={handlePasswordChange}
 				></Input>
 				<View
 					style={[
@@ -113,7 +90,7 @@ export default function Login({ navigation }: Props) {
 				>
 					<ButtonPrimary
 						title="Se connecter"
-						handlePress={handleButtonPress}
+						handlePress={handleSubmit(handleButtonPress)}
 						disabled={status === AppStatus.Loading}
 					/>
 				</View>
