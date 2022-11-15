@@ -22,9 +22,10 @@ export default function Login({ navigation }: Props) {
 	const { error, status } = useSelector(selectAuthenticationState);
 	const dispatch = useAppDispatch();
 	const {
+		reset,
 		control,
 		handleSubmit,
-		formState: { errors, isValid },
+		formState: { isValid },
 	} = useForm<FormValues>({
 		defaultValues: {
 			username: "",
@@ -34,11 +35,10 @@ export default function Login({ navigation }: Props) {
 	useEffect(() => {
 		if (status === AppStatus.Succeded) {
 			navigation.navigate("home");
+			reset();
 		}
 	}, [status]);
 	const handleButtonPress: SubmitHandler<FormValues> = (data: FormValues) => {
-		console.log("doing this");
-		console.log(data.username, data.password);
 		if (isValid) {
 			dispatch(login({ username: data.username, password: data.password }));
 		}
